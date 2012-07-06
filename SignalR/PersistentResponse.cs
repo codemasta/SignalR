@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace SignalR
@@ -18,7 +20,7 @@ namespace SignalR
         /// <summary>
         /// The list of messages to be sent to the receiving connection.
         /// </summary>
-        public IEnumerable<object> Messages { get; set; }
+        public IEnumerable<string> Messages { get; set; }
 
         /// <summary>
         /// True if the connection receives a disconnect command.
@@ -42,6 +44,21 @@ namespace SignalR
         public IDictionary<string, object> TransportData
         {
             get { return _transportData; }
+        }
+
+        public IJsonString Json { get; set; }
+
+        public void FillJson()
+        {
+            var json =
+                "{\"MessageId\":\"" + MessageId + "\"," +
+                "\"Disconnect\":" + (Disconnect ? "true" : "false") + "," +
+                 "\"Aborted\":" + (Aborted ? "true" : "false") + "," +
+                 // TODO: Groups, state, etc.
+                 "\"Messages\":[" + String.Join(",", Messages) + "]" +
+                "\"}";
+
+            Json = new JsonString(json);
         }
     }
 }

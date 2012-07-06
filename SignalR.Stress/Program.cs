@@ -55,6 +55,7 @@ namespace SignalR.Stress
             ThreadPool.SetMinThreads(32, 32);
 
             RunMemoryHost();
+            //RunBusTest();
 
             Console.ReadLine();
         }

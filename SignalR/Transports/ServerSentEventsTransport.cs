@@ -19,7 +19,7 @@ namespace SignalR.Transports
 
         public override Task Send(PersistentResponse response)
         {
-            var data = JsonSerializer.Stringify(response);
+            var data = response.Json != null ? response.Json.Value : JsonSerializer.Stringify(response);
             OnSending(data);
 
             return Context.Response.WriteAsync("id: " + response.MessageId + "\n" + "data: " + data + "\n\n");

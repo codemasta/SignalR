@@ -147,14 +147,17 @@ namespace SignalR
 
             PopulateResponseState(response);
 
+            response.FillJson();
+
             Trace.TraceInformation("Connection '{0}' received {1} messages, last id {2}", _connectionId, result.Messages.Count, result.LastMessageId);
 
             return response;
         }
 
-        private List<object> ProcessResults(MessageResult result)
+        private List<string> ProcessResults(MessageResult result)
         {
-            var messageValues = new List<object>();
+            //var messageValues = new List<object>();
+            var messageValues = new List<string>();
 
             for (int i = 0; i < result.Messages.Count; i++)
             {
@@ -168,7 +171,8 @@ namespace SignalR
                     }
                     else
                     {
-                        messageValues.Add(WrappedValue.Unwrap(message.Value, _serializer));
+                        //messageValues.Add(WrappedValue.Unwrap(message.Value, _serializer));
+                        messageValues.Add(WrappedValue.UnwrapJson(message.Value));
                     }
                 }
             }

@@ -9,10 +9,12 @@
     {
         private readonly IJsonSerializer _serializer;
         private readonly object _value;
+        private readonly IJsonString _valueJson;
 
         public WrappedValue(object value, IJsonSerializer serializer)
         {
             _value = value;
+            _valueJson = new JsonString(serializer.Stringify(value));
             _serializer = serializer;
         }
 
@@ -21,6 +23,14 @@
             get
             {
                 return _value;
+            }
+        }
+
+        public IJsonString ValueJson
+        {
+            get
+            {
+                return _valueJson;
             }
         }
 
@@ -44,6 +54,16 @@
             }
 
             return serializer.Parse((string)value);
+        }
+
+        public static string UnwrapJson(object value)
+        {
+            var wrappedValue = value as WrappedValue;
+            if (wrappedValue != null)
+            {
+                return wrappedValue.ValueJson.Value;
+            }
+            return null;
         }
 
         public override string ToString()

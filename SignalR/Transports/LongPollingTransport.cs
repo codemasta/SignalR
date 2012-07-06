@@ -150,7 +150,8 @@ namespace SignalR.Transports
 
         public virtual Task Send(object value)
         {
-            var payload = _jsonSerializer.Stringify(value);
+            var pr = value as PersistentResponse;
+            var payload = (pr != null && pr.Json != null) ? pr.Json.Value : _jsonSerializer.Stringify(value);
 
             if (IsJsonp)
             {

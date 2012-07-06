@@ -129,7 +129,7 @@ namespace SignalR.Transports
 
         public virtual Task Send(PersistentResponse response)
         {
-            var data = _jsonSerializer.Stringify(response);
+            var data = response.Json != null ? response.Json.Value : _jsonSerializer.Stringify(response);
 
             OnSending(data);
 
