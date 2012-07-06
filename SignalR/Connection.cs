@@ -147,8 +147,6 @@ namespace SignalR
 
             PopulateResponseState(response);
 
-            response.FillJson();
-
             Trace.TraceInformation("Connection '{0}' received {1} messages, last id {2}", _connectionId, result.Messages.Count, result.LastMessageId);
 
             return response;
@@ -172,7 +170,7 @@ namespace SignalR
                     else
                     {
                         //messageValues.Add(WrappedValue.Unwrap(message.Value, _serializer));
-                        messageValues.Add(WrappedValue.UnwrapJson(message.Value));
+                        messageValues.Add(message.Value.ToString());
                     }
                 }
             }

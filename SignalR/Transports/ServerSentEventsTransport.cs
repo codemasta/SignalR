@@ -14,15 +14,19 @@ namespace SignalR.Transports
 
         public override void KeepAlive()
         {
-            Context.Response.WriteAsync("data: {}\n\n").Catch();
+            WriteAsync("data: {}\n\n").Catch();
         }
 
         public override Task Send(PersistentResponse response)
         {
             var data = response.Json != null ? response.Json.Value : JsonSerializer.Stringify(response);
+            OnSendingResponse(response);
+            
+            var data = JsonSerializer.Stringify(response);
+
             OnSending(data);
 
-            return Context.Response.WriteAsync("id: " + response.MessageId + "\n" + "data: " + data + "\n\n");
+            return WriteAsync("id: " + response.MessageId + "\n" + "data: " + data + "\n\n");
         }
 
         protected override Task InitializeResponse(ITransportConnection connection)
@@ -31,7 +35,7 @@ namespace SignalR.Transports
                        .Then(() =>
                        {
                            Context.Response.ContentType = "text/event-stream";
-                           return Context.Response.WriteAsync("data: initialized\n\n");
+                           return WriteAsync("data: initialized\n\n");
                        });
         }
     }

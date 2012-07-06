@@ -46,9 +46,7 @@ namespace SignalR
             get { return _transportData; }
         }
 
-        public IJsonString Json { get; set; }
-
-        public void FillJson()
+        public string AsJson()
         {
             var json =
                 "{\"MessageId\":\"" + MessageId + "\"," +
@@ -58,7 +56,7 @@ namespace SignalR
                  "\"Messages\":[" + String.Join(",", Messages) + "]" +
                 "\"}";
 
-            Json = new JsonString(json);
+            return json;
         }
     }
 }
