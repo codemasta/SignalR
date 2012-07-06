@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 
@@ -20,7 +21,7 @@ namespace SignalR
         /// <summary>
         /// The list of messages to be sent to the receiving connection.
         /// </summary>
-        public IEnumerable<string> Messages { get; set; }
+        public IList<string> Messages { get; set; }
 
         /// <summary>
         /// True if the connection receives a disconnect command.
@@ -48,15 +49,35 @@ namespace SignalR
 
         public string AsJson()
         {
-            var json =
-                "{\"MessageId\":\"" + MessageId + "\"," +
-                "\"Disconnect\":" + (Disconnect ? "true" : "false") + "," +
-                 "\"Aborted\":" + (Aborted ? "true" : "false") + "," +
-                 // TODO: Groups, state, etc.
-                 "\"Messages\":[" + String.Join(",", Messages) + "]" +
-                "\"}";
+            using (var sw = new StringWriter())
+            using (var writer = new JsonTextWriter(sw))
+            {
+                writer.WriteStartObject();
+                
+                writer.WritePropertyName("MessageId");
+                writer.WriteValue(MessageId);
 
-            return json;
+                writer.WritePropertyName("Disconnect");
+                writer.WriteValue(Disconnect);
+
+                writer.WritePropertyName("Aborted");
+                writer.WriteValue(Aborted);
+
+                //writer.WritePropertyName("TransportData");
+                //writer.WriteValue(TransportData);
+
+                writer.WritePropertyName("Messages");
+                writer.WriteStartArray();
+                for (var i = 0; i < Messages.Count; i++)
+                {
+                    writer.WriteRawValue(Messages[i]);
+                }
+                writer.WriteEndArray();
+
+                writer.WriteEndObject();
+
+                return sw.ToString();
+            }
         }
     }
 }
